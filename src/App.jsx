@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Float, Icosahedron, MeshDistortMaterial, OrbitControls, Stars } from "@react-three/drei";
 import { motion } from "framer-motion";
-import { ShieldCheck, Bug, ScanSearch, Activity, BadgeCheck, Mail, ExternalLink } from "lucide-react";
+import { ShieldCheck, Bug, ScanSearch, Activity, BadgeCheck, Mail, ExternalLink, Menu } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 
 const skills = [
@@ -141,10 +141,10 @@ function FloatingDots({ count = 40, scrollOffset = 0 }) {
 
 function Section({ id, title, children }) {
   return (
-    <section id={id} className="relative mx-auto w-full max-w-6xl px-6 py-16 md:px-10 md:py-24">
-      <div className="mb-8">
-        <p className="mb-3 text-sm uppercase tracking-[0.35em] text-cyan-300/80">Portfolio Node</p>
-        <h2 className="text-3xl font-semibold md:text-5xl">{title}</h2>
+    <section id={id} className="relative mx-auto w-full max-w-6xl px-3 xs:px-4 sm:px-6 py-10 xs:py-12 sm:py-16 md:px-10 md:py-24">
+      <div className="mb-6 sm:mb-8">
+        <p className="mb-2 xs:mb-3 text-[10px] xs:text-xs sm:text-sm uppercase tracking-[0.3em] xs:tracking-[0.35em] text-cyan-300/80">Portfolio Node</p>
+        <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-semibold">{title}</h2>
       </div>
       {children}
     </section>
@@ -154,6 +154,8 @@ function Section({ id, title, children }) {
 export default function App() {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     if (window.history && window.history.scrollRestoration) {
@@ -163,57 +165,109 @@ export default function App() {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
 
     const handleMouseMove = (e) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
+      // Only track cursor on non-touch devices
+      if (!isMobile) {
+        setCursorPosition({ x: e.clientX, y: e.clientY });
+      }
     };
 
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      if (window.innerWidth > 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="min-h-screen">
       <div className="fixed inset-0 grid-bg opacity-40 pointer-events-none" />
       
-      {/* Cursor Following Dot */}
-      <motion.div
-        animate={{ x: cursorPosition.x - 4, y: cursorPosition.y - 4 }}
-        transition={{ type: "spring", stiffness: 150, damping: 20, mass: 0.5 }}
-        className="fixed w-2 h-2 pointer-events-none z-40"
-        style={{
-          background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(82, 224, 255, 0.6), rgba(82, 224, 255, 0.2))",
-          borderRadius: "50%",
-          boxShadow: "0 0 20px rgba(82, 224, 255, 0.8), inset -2px -2px 5px rgba(0,0,0,0.5), inset 2px 2px 5px rgba(255,255,255,0.3)",
-          backdropFilter: "blur(10px)",
-        }}
-      />
+      {/* Cursor Following Dot - Hidden on Mobile */}
+      {!isMobile && (
+        <motion.div
+          animate={{ x: cursorPosition.x - 4, y: cursorPosition.y - 4 }}
+          transition={{ type: "spring", stiffness: 150, damping: 20, mass: 0.5 }}
+          className="fixed w-2 h-2 pointer-events-none z-40"
+          style={{
+            background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(82, 224, 255, 0.6), rgba(82, 224, 255, 0.2))",
+            borderRadius: "50%",
+            boxShadow: "0 0 20px rgba(82, 224, 255, 0.8), inset -2px -2px 5px rgba(0,0,0,0.5), inset 2px 2px 5px rgba(255,255,255,0.3)",
+            backdropFilter: "blur(10px)",
+          }}
+        />
+      )}
       
-      <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 rounded-2xl glass">
-        <div className="flex items-center justify-between px-5 py-4">
-          <div>
-            <div className="text-sm uppercase tracking-[0.35em] text-cyan-300">Vishwa Joshi</div>
-            <div className="text-xs text-slate-300">Cybersecurity Analyst</div>
+      <header className="fixed left-1/2 top-1.5 xs:top-2 sm:top-3 md:top-4 z-50 w-[calc(100%-0.75rem)] xs:w-[calc(100%-1rem)] sm:w-[calc(100%-1.5rem)] md:w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 rounded-lg xs:rounded-xl sm:rounded-2xl glass">
+        <div className="flex items-center justify-between px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 xs:py-3 sm:py-3.5 md:py-4 gap-2 xs:gap-3">
+          <div className="min-w-0">
+            <div className="text-[10px] xs:text-xs sm:text-sm uppercase tracking-[0.3em] xs:tracking-[0.35em] text-cyan-300 truncate">Vishwa Joshi</div>
+            <div className="text-[9px] xs:text-xs sm:text-xs text-slate-300 truncate">Cybersecurity Analyst</div>
           </div>
-          <nav className="hidden gap-6 text-sm text-slate-200 md:flex">
-            <a href="#about">About</a>
-            <a href="#experience">Experience</a>
-            <a href="#projects">Projects</a>
-            <a href="#certifications">Certifications</a>
-            <a href="#contact">Contact</a>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden gap-2 sm:gap-3 md:gap-4 lg:gap-6 text-[10px] sm:text-xs md:text-sm text-slate-200 md:flex md:ml-auto">
+            <a href="#about" className="transition-colors hover:text-cyan-300 whitespace-nowrap">About</a>
+            <a href="#experience" className="transition-colors hover:text-cyan-300 whitespace-nowrap">Experience</a>
+            <a href="#projects" className="transition-colors hover:text-cyan-300 whitespace-nowrap">Projects</a>
+            <a href="#certifications" className="transition-colors hover:text-cyan-300 whitespace-nowrap">Skills</a>
+            <a href="#contact" className="transition-colors hover:text-cyan-300 whitespace-nowrap">Contact</a>
           </nav>
+          
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex flex-col gap-1 p-1.5 xs:p-2 ml-auto"
+            aria-label="Toggle menu"
+          >
+            <span className={`w-5 xs:w-6 h-0.5 bg-slate-200 transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-1.5 xs:translate-y-2' : ''}`}></span>
+            <span className={`w-5 xs:w-6 h-0.5 bg-slate-200 transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
+            <span className={`w-5 xs:w-6 h-0.5 bg-slate-200 transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-1.5 xs:-translate-y-2' : ''}`}></span>
+          </button>
         </div>
+        
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-white/10 bg-white/5"
+          >
+            <nav className="flex flex-col gap-0">
+              {['about', 'experience', 'projects', 'certifications', 'contact'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 xs:px-4 py-2.5 xs:py-3 text-xs xs:text-sm text-slate-300 border-b border-white/5 transition-colors hover:text-cyan-300 hover:bg-white/5 first:rounded-bl-lg xs:first:rounded-bl-xl last:rounded-br-lg xs:last:rounded-br-xl last:border-0"
+                >
+                  {item === 'certifications' ? 'Skills' : item.charAt(0).toUpperCase() + item.slice(1)}
+                </a>
+              ))}
+            </nav>
+          </motion.div>
+        )}
       </header>
 
-      <main>
-        <section className="relative min-h-screen overflow-hidden px-6 pt-32 md:px-10">
-          <div className="absolute inset-0">
+      <main className="w-full overflow-x-hidden">
+        <section className="relative min-h-screen overflow-x-hidden px-3 xs:px-4 sm:px-6 pt-20 xs:pt-24 sm:pt-28 md:pt-32 lg:pt-40 md:px-10">
+          {/* 3D Canvas - Reduced or hidden on mobile */}
+          <div className="absolute inset-0 hidden sm:block">
             <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
               <ambientLight intensity={1.2} />
               <directionalLight position={[3, 3, 3]} intensity={2} />
@@ -223,37 +277,39 @@ export default function App() {
             </Canvas>
           </div>
 
-          <div className="relative z-10 mx-auto grid min-h-[82vh] max-w-6xl items-center gap-12 md:grid-cols-2">
+          <div className="relative z-10 mx-auto w-full grid min-h-[70vh] sm:min-h-[82vh] max-w-6xl items-center gap-4 sm:gap-6 md:gap-12 md:grid-cols-2">
             <motion.div
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full"
             >
-              <p className="mb-4 text-sm uppercase tracking-[0.4em] text-cyan-300">Security+ Certified</p>
-              <h1 className="max-w-2xl text-5xl font-semibold leading-[0.95] md:text-7xl">
+              <p className="mb-3 sm:mb-4 text-[10px] xs:text-xs sm:text-sm uppercase tracking-[0.3em] xs:tracking-[0.4em] text-cyan-300">Security+ Certified</p>
+              <h1 className="max-w-2xl text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-semibold leading-tight sm:leading-[0.95]">
                 Cybersecurity Engineer
                 <span className="block text-cyan-300">with a Frontend Mindset</span>
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-slate-300 md:text-lg">
+              <p className="mt-3 sm:mt-6 max-w-xl text-xs xs:text-sm sm:text-base md:text-lg leading-relaxed sm:leading-8 text-slate-300">
                 I build secure digital experiences with strengths in vulnerability assessment, web application
                 security testing, threat analysis, secure coding, and modern frontend execution.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
-                <a href="#projects" className="rounded-full border border-cyan-300/30 bg-cyan-300/15 px-6 py-3 text-sm font-medium text-cyan-100">
+              <div className="mt-4 sm:mt-8 flex flex-col xs:flex-row flex-wrap gap-2 xs:gap-3 sm:gap-4">
+                <a href="#projects" className="text-center rounded-full border border-cyan-300/30 bg-cyan-300/15 px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 text-xs font-medium text-cyan-100 transition-all hover:bg-cyan-300/25 active:scale-95 flex-1 xs:flex-initial">
                   Explore Projects
                 </a>
-                <a href="#contact" className="rounded-full border border-white/15 px-6 py-3 text-sm font-medium text-white/90">
+                <a href="#contact" className="text-center rounded-full border border-white/15 px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 text-xs font-medium text-white/90 transition-all hover:bg-white/5 active:scale-95 flex-1 xs:flex-initial">
                   Contact Me
                 </a>
               </div>
             </motion.div>
 
+            {/* Hero Card - Hidden on mobile, visible on md+ */}
             <motion.div
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.05, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="glass cyber-line rounded-[28px] p-6"
+              className="hidden md:block glass cyber-line rounded-[28px] p-6"
             >
               <div className="mb-5 flex items-center justify-between">
                 <span className="text-xs uppercase tracking-[0.35em] text-slate-300">Live Profile Signal</span>
@@ -283,13 +339,44 @@ export default function App() {
                 </div>
               </div>
             </motion.div>
+
+            {/* Hero Card - Mobile Version (Collapsed) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.95, delay: 0.15 }}
+              className="md:hidden glass rounded-[16px] xs:rounded-[20px] p-3 xs:p-4 sm:p-5 w-full"
+            >
+              <div className="mb-3 sm:mb-4 flex items-center justify-between gap-2">
+                <span className="text-[10px] xs:text-xs uppercase tracking-[0.25em] xs:tracking-[0.35em] text-slate-300">Profile Signal</span>
+                <span className="rounded-full bg-emerald-400/15 px-2 xs:px-3 py-0.5 xs:py-1 text-[9px] xs:text-xs text-emerald-300 whitespace-nowrap">Available</span>
+              </div>
+              <div className="grid gap-2 xs:gap-3 grid-cols-2">
+                <div className="rounded-lg xs:rounded-xl border border-white/10 bg-white/5 p-2.5 xs:p-3">
+                  <ShieldCheck className="mb-1.5 xs:mb-2 text-cyan-300" size={14} />
+                  <h3 className="text-[11px] xs:text-xs font-medium">Secure Coding</h3>
+                </div>
+                <div className="rounded-lg xs:rounded-xl border border-white/10 bg-white/5 p-2.5 xs:p-3">
+                  <Bug className="mb-1.5 xs:mb-2 text-rose-300" size={14} />
+                  <h3 className="text-[11px] xs:text-xs font-medium">VAPT</h3>
+                </div>
+                <div className="rounded-lg xs:rounded-xl border border-white/10 bg-white/5 p-2.5 xs:p-3">
+                  <ScanSearch className="mb-1.5 xs:mb-2 text-cyan-300" size={14} />
+                  <h3 className="text-[11px] xs:text-xs font-medium">Tooling</h3>
+                </div>
+                <div className="rounded-lg xs:rounded-xl border border-white/10 bg-white/5 p-2.5 xs:p-3">
+                  <Activity className="mb-1.5 xs:mb-2 text-amber-300" size={14} />
+                  <h3 className="text-[11px] xs:text-xs font-medium">Threats</h3>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </section>
 
         <Section id="about" title="About">
           <FloatingDots count={35} scrollOffset={scrollY} />
           <motion.div
-            className="absolute -top-40 -right-40 w-96 h-96 pointer-events-none opacity-20"
+            className="absolute -top-40 -right-40 w-96 h-96 pointer-events-none opacity-20 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(82, 224, 255, 0.3), transparent)",
               filter: "blur(40px)",
@@ -297,7 +384,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute -bottom-40 -left-40 w-96 h-96 pointer-events-none opacity-15"
+            className="absolute -bottom-40 -left-40 w-96 h-96 pointer-events-none opacity-15 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent)",
               filter: "blur(40px)",
@@ -305,7 +392,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 w-64 h-64 pointer-events-none opacity-12"
+            className="absolute top-1/2 left-1/2 w-64 h-64 pointer-events-none opacity-12 hidden sm:block"
             style={{
               background: "conic-gradient(from 0deg, rgba(34, 197, 94, 0.18), rgba(251, 146, 60, 0.12), transparent)",
               filter: "blur(35px)",
@@ -313,7 +400,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-0 right-0 w-48 h-48 pointer-events-none opacity-10"
+            className="absolute top-0 right-0 w-48 h-48 pointer-events-none opacity-10 hidden sm:block"
             style={{
               background: "radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.15), transparent)",
               filter: "blur(30px)",
@@ -321,7 +408,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-14 right-16 w-20 h-20 rounded-full pointer-events-none opacity-30"
+            className="absolute top-14 right-16 w-20 h-20 rounded-full pointer-events-none opacity-30 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(82, 224, 255, 0.45), rgba(168, 85, 247, 0.12), transparent)",
               filter: "blur(18px)",
@@ -329,20 +416,20 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-24 left-16 w-24 h-12 rounded-3xl pointer-events-none opacity-20"
+            className="absolute bottom-24 left-16 w-24 h-12 rounded-3xl pointer-events-none opacity-20 hidden sm:block"
             style={{
               background: "linear-gradient(135deg, rgba(82,224,255,0.3), rgba(255,255,255,0.08))",
               boxShadow: "0 20px 80px rgba(82,224,255,0.12)",
               transform: `perspective(1000px) rotateX(${scrollY * 0.08}deg) rotateZ(${scrollY * 0.05}deg) translateZ(${scrollY * 0.14}px)`,
             }}
           />
-          <div className="glass rounded-[28px] p-8 text-slate-300 relative z-10">
+          <div className="glass rounded-[20px] sm:rounded-[28px] p-4 sm:p-8 text-slate-300 relative z-10">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
-              className="max-w-3xl text-lg leading-8"
+              className="max-w-3xl text-sm sm:text-base md:text-lg leading-7 sm:leading-8"
             >
               I am a cybersecurity-focused engineer with hands-on experience in vulnerability assessment, web
               application security testing, and threat analysis, backed by secure full-stack development experience.
@@ -354,7 +441,7 @@ export default function App() {
         <Section id="experience" title="Experience">
           <FloatingDots count={40} scrollOffset={scrollY} />
           <motion.div
-            className="absolute top-1/2 -left-32 w-80 h-80 pointer-events-none opacity-20"
+            className="absolute top-1/2 -left-32 w-80 h-80 pointer-events-none opacity-20 hidden sm:block"
             style={{
               background: "conic-gradient(from 0deg, rgba(52, 211, 153, 0.25), rgba(82, 224, 255, 0.2), transparent)",
               borderRadius: "50%",
@@ -363,7 +450,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-20 -right-20 w-72 h-72 pointer-events-none opacity-15"
+            className="absolute bottom-20 -right-20 w-72 h-72 pointer-events-none opacity-15 hidden sm:block"
             style={{
               background: "radial-gradient(circle at 40% 60%, rgba(251, 146, 60, 0.2), transparent)",
               filter: "blur(45px)",
@@ -371,7 +458,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-0 right-1/4 w-56 h-56 pointer-events-none opacity-12"
+            className="absolute top-0 right-1/4 w-56 h-56 pointer-events-none opacity-12 hidden sm:block"
             style={{
               background: "conic-gradient(from 180deg, rgba(168, 85, 247, 0.18), rgba(82, 224, 255, 0.15), transparent)",
               borderRadius: "50%",
@@ -380,7 +467,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-1/3 left-0 w-64 h-64 pointer-events-none opacity-10"
+            className="absolute bottom-1/3 left-0 w-64 h-64 pointer-events-none opacity-10 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(34, 197, 94, 0.15), rgba(139, 92, 246, 0.1), transparent)",
               filter: "blur(38px)",
@@ -388,7 +475,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-24 left-24 w-24 h-24 rounded-full pointer-events-none opacity-25"
+            className="absolute top-24 left-24 w-24 h-24 rounded-full pointer-events-none opacity-25 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(251, 146, 60, 0.35), rgba(82, 224, 255, 0.08), transparent)",
               filter: "blur(20px)",
@@ -396,7 +483,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-40 right-20 w-28 h-14 rounded-[32px] pointer-events-none opacity-20"
+            className="absolute top-40 right-20 w-28 h-14 rounded-[32px] pointer-events-none opacity-20 hidden sm:block"
             style={{
               background: "linear-gradient(135deg, rgba(168,85,247,0.22), rgba(34,197,94,0.14))",
               boxShadow: "0 18px 65px rgba(168,85,247,0.12)",
@@ -412,16 +499,16 @@ export default function App() {
                 whileHover={{ y: -6, rotateX: 2, rotateY: -2 }}
                 viewport={{ once: true }}
                 key={item.title}
-                className="glass rounded-[28px] p-7"
+                className="glass rounded-[20px] sm:rounded-[28px] p-4 sm:p-7"
               >
-                <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+                <div className="flex flex-col justify-between gap-2 sm:gap-3 md:flex-row md:items-center">
                   <div>
-                    <h3 className="text-2xl font-semibold">{item.title}</h3>
-                    <p className="text-cyan-300">{item.company}</p>
+                    <h3 className="text-lg sm:text-2xl font-semibold">{item.title}</h3>
+                    <p className="text-xs sm:text-base text-cyan-300">{item.company}</p>
                   </div>
-                  <p className="text-sm text-slate-400">{item.period}</p>
+                  <p className="text-xs sm:text-sm text-slate-400">{item.period}</p>
                 </div>
-                <ul className="mt-5 space-y-3 text-slate-300">
+                <ul className="mt-3 sm:mt-5 space-y-2 sm:space-y-3 text-xs sm:text-base text-slate-300">
                   {item.points.map((point, pointIndex) => (
                     <motion.li
                       key={point}
@@ -429,7 +516,7 @@ export default function App() {
                       whileInView={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.65, delay: (index * 0.1) + (pointIndex * 0.05), ease: [0.22, 1, 0.36, 1] }}
                       viewport={{ once: true }}
-                      className="rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+                      className="rounded-lg sm:rounded-xl border border-white/10 bg-white/5 px-3 sm:px-4 py-2 sm:py-3"
                     >
                       {point}
                     </motion.li>
@@ -443,7 +530,7 @@ export default function App() {
         <Section id="projects" title="Projects">
           <FloatingDots count={45} scrollOffset={scrollY} />
           <motion.div
-            className="absolute top-0 right-1/3 w-96 h-96 pointer-events-none opacity-20"
+            className="absolute top-0 right-1/3 w-96 h-96 pointer-events-none opacity-20 hidden sm:block"
             style={{
               background: "conic-gradient(from 180deg, rgba(82, 224, 255, 0.3), rgba(139, 92, 246, 0.25), transparent)",
               borderRadius: "50%",
@@ -452,7 +539,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-0 w-80 h-80 pointer-events-none opacity-12"
+            className="absolute bottom-0 left-0 w-80 h-80 pointer-events-none opacity-12 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(34, 197, 94, 0.2), transparent)",
               filter: "blur(45px)",
@@ -460,7 +547,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-1/4 left-1/2 w-72 h-72 pointer-events-none opacity-14"
+            className="absolute top-1/4 left-1/2 w-72 h-72 pointer-events-none opacity-14 hidden sm:block"
             style={{
               background: "conic-gradient(from 90deg, rgba(251, 146, 60, 0.22), rgba(52, 211, 153, 0.18), transparent)",
               borderRadius: "50%",
@@ -469,7 +556,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-1/2 right-0 w-60 h-60 pointer-events-none opacity-10"
+            className="absolute bottom-1/2 right-0 w-60 h-60 pointer-events-none opacity-10 hidden sm:block"
             style={{
               background: "radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.16), transparent)",
               filter: "blur(38px)",
@@ -477,7 +564,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-28 left-16 w-20 h-20 rounded-full pointer-events-none opacity-30"
+            className="absolute top-28 left-16 w-20 h-20 rounded-full pointer-events-none opacity-30 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(251, 146, 60, 0.36), rgba(82, 224, 255, 0.08), transparent)",
               filter: "blur(18px)",
@@ -485,14 +572,14 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-40 right-16 w-28 h-14 rounded-[32px] pointer-events-none opacity-20"
+            className="absolute top-40 right-16 w-28 h-14 rounded-[32px] pointer-events-none opacity-20 hidden sm:block"
             style={{
               background: "linear-gradient(135deg, rgba(82,224,255,0.24), rgba(139,92,246,0.12))",
               boxShadow: "0 18px 70px rgba(82,224,255,0.12)",
               transform: `perspective(1200px) rotateX(${(scrollY - 2000) * 0.08}deg) rotateZ(${(scrollY - 2000) * 0.04}deg) translateZ(${(scrollY - 2000) * 0.16}px)`,
             }}
           />
-          <div className="grid gap-6 md:grid-cols-2 relative z-10">
+          <div className="grid gap-6 sm:grid-cols-2 relative z-10">
             {projects.map((project, index) => (
               <motion.div
                 key={project.name}
@@ -501,14 +588,14 @@ export default function App() {
                 transition={{ duration: 0.85, delay: index * 0.2, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -8, rotateX: 4, rotateY: 4, scale: 1.02 }}
                 viewport={{ once: true }}
-                className="glass rounded-[28px] p-7"
+                className="glass rounded-[20px] sm:rounded-[28px] p-4 sm:p-7"
               >
                 <motion.h3
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.75, delay: (index * 0.2) + 0.1, ease: [0.22, 1, 0.36, 1] }}
                   viewport={{ once: true }}
-                  className="text-2xl font-semibold"
+                  className="text-lg sm:text-2xl font-semibold"
                 >
                   {project.name}
                 </motion.h3>
@@ -517,7 +604,7 @@ export default function App() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.75, delay: (index * 0.2) + 0.2, ease: [0.22, 1, 0.36, 1] }}
                   viewport={{ once: true }}
-                  className="mt-4 leading-8 text-slate-300"
+                  className="mt-3 sm:mt-4 text-xs sm:text-base leading-6 sm:leading-8 text-slate-300"
                 >
                   {project.desc}
                 </motion.p>
@@ -529,7 +616,7 @@ export default function App() {
         <Section id="certifications" title="Certifications & Skills">
           <FloatingDots count={50} scrollOffset={scrollY} />
           <motion.div
-            className="absolute -top-20 -left-20 w-96 h-96 pointer-events-none opacity-16"
+            className="absolute -top-20 -left-20 w-96 h-96 pointer-events-none opacity-16 hidden sm:block"
             style={{
               background: "conic-gradient(from 45deg, rgba(168, 85, 247, 0.25), rgba(52, 211, 153, 0.2), transparent)",
               borderRadius: "50%",
@@ -538,7 +625,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-1/3 -right-32 w-80 h-80 pointer-events-none opacity-14"
+            className="absolute top-1/3 -right-32 w-80 h-80 pointer-events-none opacity-14 hidden sm:block"
             style={{
               background: "radial-gradient(circle at 60% 40%, rgba(251, 146, 60, 0.18), transparent)",
               filter: "blur(45px)",
@@ -546,7 +633,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-16 left-16 w-20 h-20 rounded-full pointer-events-none opacity-28"
+            className="absolute top-16 left-16 w-20 h-20 rounded-full pointer-events-none opacity-28 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(82,224,255,0.4), rgba(168,85,247,0.1), transparent)",
               filter: "blur(18px)",
@@ -554,7 +641,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-1/3 w-64 h-64 pointer-events-none opacity-10"
+            className="absolute bottom-0 left-1/3 w-64 h-64 pointer-events-none opacity-10 hidden sm:block"
             style={{
               background: "conic-gradient(from 270deg, rgba(82, 224, 255, 0.2), rgba(139, 92, 246, 0.15), transparent)",
               borderRadius: "50%",
@@ -563,7 +650,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-2/3 right-1/4 w-56 h-56 pointer-events-none opacity-12"
+            className="absolute top-2/3 right-1/4 w-56 h-56 pointer-events-none opacity-12 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(34, 197, 94, 0.16), rgba(251, 146, 60, 0.12), transparent)",
               filter: "blur(35px)",
@@ -576,18 +663,18 @@ export default function App() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 1.0, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
-              className="glass rounded-[28px] p-7"
+              className="glass rounded-[20px] sm:rounded-[28px] p-4 sm:p-7"
             >
               <motion.h3
                 initial={{ opacity: 0, y: -20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 viewport={{ once: true }}
-                className="mb-5 text-2xl font-semibold"
+                className="mb-4 sm:mb-5 text-lg sm:text-2xl font-semibold"
               >
                 Skill Matrix
               </motion.h3>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {skills.map((skill, index) => (
                   <motion.span
                     key={skill}
@@ -596,7 +683,7 @@ export default function App() {
                     transition={{ duration: 0.65, delay: 0.3 + (index * 0.05), ease: [0.22, 1, 0.36, 1] }}
                     whileHover={{ scale: 1.05, y: -2 }}
                     viewport={{ once: true }}
-                    className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm text-cyan-100"
+                    className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-cyan-100"
                   >
                     {skill}
                   </motion.span>
@@ -609,18 +696,18 @@ export default function App() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 1.0, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
-              className="glass rounded-[28px] p-7"
+              className="glass rounded-[20px] sm:rounded-[28px] p-4 sm:p-7"
             >
               <motion.h3
                 initial={{ opacity: 0, y: -20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 viewport={{ once: true }}
-                className="mb-5 text-2xl font-semibold"
+                className="mb-4 sm:mb-5 text-lg sm:text-2xl font-semibold"
               >
                 Credentials
               </motion.h3>
-              <ul className="space-y-3 text-slate-300">
+              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-base text-slate-300">
                 {[
                   "CompTIA Security+",
                   "Google Cybersecurity Certification",
@@ -635,9 +722,9 @@ export default function App() {
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.75, delay: 0.4 + (index * 0.1), ease: [0.22, 1, 0.36, 1] }}
                     viewport={{ once: true }}
-                    className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+                    className="flex items-start gap-2 sm:gap-3 rounded-lg sm:rounded-xl border border-white/10 bg-white/5 px-3 sm:px-4 py-2 sm:py-3"
                   >
-                    <BadgeCheck className="mt-0.5 text-cyan-300" size={18} />
+                    <BadgeCheck className="mt-0.5 flex-shrink-0 text-cyan-300" size={16} />
                     <span>{item}</span>
                   </motion.li>
                 ))}
@@ -649,7 +736,7 @@ export default function App() {
         <Section id="contact" title="Contact">
           <FloatingDots count={55} scrollOffset={scrollY} />
           <motion.div
-            className="absolute top-0 left-1/4 w-96 h-96 pointer-events-none opacity-20"
+            className="absolute top-0 left-1/4 w-96 h-96 pointer-events-none opacity-20 hidden sm:block"
             style={{
               background: "conic-gradient(from 270deg, rgba(82, 224, 255, 0.3), rgba(168, 85, 247, 0.25), transparent)",
               borderRadius: "50%",
@@ -658,7 +745,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-0 -right-40 w-96 h-96 pointer-events-none opacity-12"
+            className="absolute bottom-0 -right-40 w-96 h-96 pointer-events-none opacity-12 hidden sm:block"
             style={{
               background: "radial-gradient(circle, rgba(34, 197, 94, 0.2), rgba(82, 224, 255, 0.1), transparent)",
               filter: "blur(45px)",
@@ -666,7 +753,7 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute top-1/2 right-1/3 w-80 h-80 pointer-events-none opacity-16"
+            className="absolute top-1/2 right-1/3 w-80 h-80 pointer-events-none opacity-16 hidden sm:block"
             style={{
               background: "conic-gradient(from 135deg, rgba(251, 146, 60, 0.22), rgba(52, 211, 153, 0.18), transparent)",
               borderRadius: "50%",
@@ -675,20 +762,20 @@ export default function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-1/4 left-1/4 w-72 h-72 pointer-events-none opacity-14"
+            className="absolute bottom-1/4 left-1/4 w-72 h-72 pointer-events-none opacity-14 hidden sm:block"
             style={{
               background: "radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.18), transparent)",
               filter: "blur(42px)",
               transform: `perspective(1300px) rotateZ(${-(scrollY - 4400) * 0.11}deg) rotateY(${(scrollY - 4400) * 0.07}deg) translateZ(${-(scrollY - 4400) * 0.22}px)`,
             }}
           />
-          <div className="glass rounded-[28px] p-8 relative z-10">
+          <div className="glass rounded-[20px] sm:rounded-[28px] p-4 sm:p-8 relative z-10">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.95, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
-              className="max-w-2xl text-lg leading-8 text-slate-300"
+              className="max-w-2xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-300"
             >
               Open to cybersecurity analyst, application security, SOC, and security engineering opportunities.
             </motion.p>
@@ -698,15 +785,15 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.95, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
-              className="mt-8 flex flex-wrap gap-4"
+              className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4"
             >
               <motion.a
                 href="mailto:joshivishwa211@gmail.com"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-6 py-3 text-sm text-cyan-100 transition-all duration-300 hover:bg-cyan-300/20"
+                className="flex items-center justify-center sm:justify-start gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm text-cyan-100 transition-all hover:bg-cyan-300/20 active:scale-95 touch-manipulation"
               >
-                <Mail size={16} />
+                <Mail size={14} className="sm:w-4 sm:h-4" />
                 Email Me
               </motion.a>
               <motion.a
@@ -715,9 +802,9 @@ export default function App() {
                 rel="noreferrer"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-white/90 transition-all duration-300 hover:bg-white/5"
+                className="flex items-center justify-center sm:justify-start gap-2 rounded-full border border-white/15 px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm text-white/90 transition-all hover:bg-white/5 active:scale-95 touch-manipulation"
               >
-                <ExternalLink size={16} />
+                <ExternalLink size={14} className="sm:w-4 sm:h-4" />
                 LinkedIn
               </motion.a>
             </motion.div>
