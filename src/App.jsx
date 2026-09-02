@@ -40,7 +40,7 @@ const experience = [
   },
   {
     title: "Frontend Developer Intern",
-    company: "Service Box",
+    company: "techmihirnaik Group Service Box",
     period: "Jan 2023 – Apr 2023",
     points: [
       "Redesigned and optimized client websites using HTML, CSS, Bootstrap, and JavaScript.",
@@ -52,11 +52,24 @@ const experience = [
 const projects = [
   {
     name: "Cyberattack Detection using Machine Learning",
-    desc: "Built Python ML models for cyberattack detection using structured datasets, preprocessing, and evaluation workflows.",
+    subtitle: "Python | Machine Learning | Deep Learning | Cybersecurity",
+    points: [
+      "Developed machine learning and deep learning models in Python to detect cyberattack patterns using structured security datasets.",
+      "Performed preprocessing, model training, and performance evaluation to compare multiple ML/DL algorithms.",
+      "Conducted a comparative analysis to identify the best-performing model based on detection accuracy and other evaluation metrics.",
+      "Published a research paper based on the comparative study in the cybersecurity domain.",
+      <>DOI: <a href="https://doi.org/10.22214/ijraset.2024.60026" target="_blank" rel="noopener noreferrer" className="text-cyan-300 underline">https://doi.org/10.22214/ijraset.2024.60026</a></>,
+    ],
   },
   {
-    name: "SIEM Log Analysis",
-    desc: "Analyzed simulated logs in Splunk to detect failed logins, anomalies, and suspicious traffic patterns.",
+    name: "SIEM Log Analysis & Security Monitoring",
+    subtitle: "Splunk | SIEM | SPL | Log Analysis",
+    points: [
+      "Built a simulated SIEM environment using Splunk to analyze authentication and network security logs.",
+      "Developed SPL queries to detect failed login attempts, suspicious authentication activity, anomalies, and abnormal traffic patterns.",
+      "Investigated events using source IP, username, timestamp, and event frequency to identify potentially malicious behavior.",
+      "Analyzed simulated logs in Splunk to detect failed logins, anomalies, and suspicious traffic patterns.",
+    ],
   },
 ];
 
@@ -141,9 +154,8 @@ function FloatingDots({ count = 40, scrollOffset = 0 }) {
 
 function Section({ id, title, children }) {
   return (
-    <section id={id} className="relative mx-auto w-full max-w-6xl px-3 xs:px-4 sm:px-6 py-10 xs:py-12 sm:py-16 md:px-10 md:py-24">
+    <section id={id} className="relative mx-auto w-full max-w-6xl px-3 xs:px-4 sm:px-6 py-8 xs:py-10 sm:py-12 md:px-10 md:py-16">
       <div className="mb-6 sm:mb-8">
-        <p className="mb-2 xs:mb-3 text-[10px] xs:text-xs sm:text-sm uppercase tracking-[0.3em] xs:tracking-[0.35em] text-cyan-300/80">Portfolio Node</p>
         <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-semibold">{title}</h2>
       </div>
       {children}
@@ -152,7 +164,6 @@ function Section({ id, title, children }) {
 }
 
 export default function App() {
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -163,13 +174,6 @@ export default function App() {
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-
-    const handleMouseMove = (e) => {
-      // Only track cursor on non-touch devices
-      if (!isMobile) {
-        setCursorPosition({ x: e.clientX, y: e.clientY });
-      }
-    };
 
     const handleScroll = () => {
       setScrollY(window.scrollY);
@@ -182,12 +186,10 @@ export default function App() {
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleResize);
     
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
     };
@@ -196,21 +198,6 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <div className="fixed inset-0 grid-bg opacity-40 pointer-events-none" />
-      
-      {/* Cursor Following Dot - Hidden on Mobile */}
-      {!isMobile && (
-        <motion.div
-          animate={{ x: cursorPosition.x - 4, y: cursorPosition.y - 4 }}
-          transition={{ type: "spring", stiffness: 150, damping: 20, mass: 0.5 }}
-          className="fixed w-2 h-2 pointer-events-none z-40"
-          style={{
-            background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(82, 224, 255, 0.6), rgba(82, 224, 255, 0.2))",
-            borderRadius: "50%",
-            boxShadow: "0 0 20px rgba(82, 224, 255, 0.8), inset -2px -2px 5px rgba(0,0,0,0.5), inset 2px 2px 5px rgba(255,255,255,0.3)",
-            backdropFilter: "blur(10px)",
-          }}
-        />
-      )}
       
       <header className="fixed left-1/2 top-1.5 xs:top-2 sm:top-3 md:top-4 z-50 w-[calc(100%-0.75rem)] xs:w-[calc(100%-1rem)] sm:w-[calc(100%-1.5rem)] md:w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 rounded-lg xs:rounded-xl sm:rounded-2xl glass">
         <div className="flex items-center justify-between px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 xs:py-3 sm:py-3.5 md:py-4 gap-2 xs:gap-3">
@@ -429,7 +416,7 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
-              className="max-w-3xl text-sm sm:text-base md:text-lg leading-7 sm:leading-8"
+              className="max-w-none text-justify text-sm sm:text-base md:text-lg leading-7 sm:leading-8"
             >
               I am a cybersecurity-focused engineer with hands-on experience in vulnerability assessment, web
               application security testing, and threat analysis, backed by secure full-stack development experience.
@@ -508,7 +495,7 @@ export default function App() {
                   </div>
                   <p className="text-xs sm:text-sm text-slate-400">{item.period}</p>
                 </div>
-                <ul className="mt-3 sm:mt-5 space-y-2 sm:space-y-3 text-xs sm:text-base text-slate-300">
+                <ul className="mt-3 sm:mt-5 list-disc space-y-0.5 sm:space-y-1 pl-5 sm:pl-6 text-xs sm:text-base text-slate-300">
                   {item.points.map((point, pointIndex) => (
                     <motion.li
                       key={point}
@@ -516,7 +503,7 @@ export default function App() {
                       whileInView={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.65, delay: (index * 0.1) + (pointIndex * 0.05), ease: [0.22, 1, 0.36, 1] }}
                       viewport={{ once: true }}
-                      className="rounded-lg sm:rounded-xl border border-white/10 bg-white/5 px-3 sm:px-4 py-2 sm:py-3"
+                      className="py-1 sm:py-2"
                     >
                       {point}
                     </motion.li>
@@ -586,7 +573,7 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.85, delay: index * 0.2, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -8, rotateX: 4, rotateY: 4, scale: 1.02 }}
+                whileHover={{ y: -8 }}
                 viewport={{ once: true }}
                 className="glass rounded-[20px] sm:rounded-[28px] p-4 sm:p-7"
               >
@@ -599,15 +586,22 @@ export default function App() {
                 >
                   {project.name}
                 </motion.h3>
-                <motion.p
+                {project.subtitle && (
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-cyan-300">
+                    {project.subtitle}
+                  </p>
+                )}
+                <motion.ul
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.75, delay: (index * 0.2) + 0.2, ease: [0.22, 1, 0.36, 1] }}
                   viewport={{ once: true }}
-                  className="mt-3 sm:mt-4 text-xs sm:text-base leading-6 sm:leading-8 text-slate-300"
+                  className="mt-3 sm:mt-4 list-disc space-y-1 pl-5 sm:pl-6 text-xs sm:text-base leading-6 sm:leading-8 text-slate-300"
                 >
-                  {project.desc}
-                </motion.p>
+                  {project.points.map((point, pointIndex) => (
+                    <li key={pointIndex}>{point}</li>
+                  ))}
+                </motion.ul>
               </motion.div>
             ))}
           </div>
@@ -775,7 +769,7 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.95, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
-              className="max-w-2xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-300"
+              className="max-w-3xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-300"
             >
               Open to cybersecurity analyst, application security, SOC, and security engineering opportunities.
             </motion.p>
